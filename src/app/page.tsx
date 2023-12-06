@@ -15,7 +15,7 @@ import {
 export type Payment = {
   id: string;
   txid: string;
-  status: "pending" | "processing" | "success" | "failed" | "minted";
+  status: "pending" | "processing" | "success" | "failed" | "tsx sent";
 };
 
 // Define the columns
@@ -139,7 +139,7 @@ const Home = () => {
       const newTx: Payment = {
         id: res.txid,
         txid: res.txid,
-        status: "minted", // or other status
+        status: "tsx sent", // or other status
       };
 
       setData((currentData) => [...currentData, newTx]);
