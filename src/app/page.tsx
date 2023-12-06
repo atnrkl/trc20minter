@@ -3,14 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { DataTable } from "./dataTable";
+import { columns } from "./columns";
+
 // Define the Payment type
 export type Payment = {
   id: string;
@@ -18,103 +13,11 @@ export type Payment = {
   status: "pending" | "processing" | "success" | "failed" | "tsx sent";
 };
 
-// Define the columns
-import { ColumnDef } from "@tanstack/react-table";
-
-export const columns: ColumnDef<Payment>[] = [
-  {
-    accessorKey: "txid",
-    header: "txid",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-  },
-];
-
-// Create DataTableProps interface
-interface DataTableProps<TData> {
-  columns: ColumnDef<TData>[];
-  data: TData[];
-}
-
-// Implement the DataTable component
-import {
-  flexRender,
-  useReactTable,
-  getCoreRowModel,
-} from "@tanstack/react-table";
-
-export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
-  return (
-    <div className="rounded-md border w-[700px]">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
-
-// Example component that uses DataTable
 const Home = () => {
   const [PK, setPK] = useState("");
   const [memo, setMemo] = useState("");
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const [data, setData] = useState<Payment[]>([]);
-
-  /*const data: Payment[] = [
-     {
-      id: "728ed52f",
-      amount: 100,
-      status: "pending",
-      email: "m@example.com",
-    }, 
-  ];*/
 
   const fetchData = async () => {
     try {

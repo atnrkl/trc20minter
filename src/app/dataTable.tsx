@@ -1,11 +1,10 @@
-"use client";
-
+// Implement the DataTable component
 import {
-  ColumnDef,
   flexRender,
-  getCoreRowModel,
   useReactTable,
+  getCoreRowModel,
 } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 
 import {
   Table,
@@ -16,15 +15,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData> {
+  columns: ColumnDef<TData>[];
   data: TData[];
 }
 
-export function DataTable<Payment, TValue>({
-  columns,
-  data,
-}: DataTableProps<Payment, TValue>) {
+export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
   const table = useReactTable({
     data,
     columns,
@@ -32,7 +28,7 @@ export function DataTable<Payment, TValue>({
   });
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border w-[700px]">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
