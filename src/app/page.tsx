@@ -27,7 +27,7 @@ const Home = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          privateKey: PK.trim(),
+          pKey: PK.trim(),
           memo: memo.trim(),
         }),
       });
@@ -77,8 +77,9 @@ const Home = () => {
   return (
     <div className="w-full space-y-10 min-h-screen flex-col flex items-center justify-center">
       <div>
+        <p>Your P.K</p>
         <Input
-          placeholder="Private key"
+          placeholder=""
           onChange={(e) => setPK(e.target.value)}
           className="w-96 rounded-md text-gray-900"
         />

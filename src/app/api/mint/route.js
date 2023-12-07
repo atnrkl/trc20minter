@@ -6,13 +6,13 @@ const eventServer = new HttpProvider("https://api.trongrid.io");
 
 export async function POST(request) {
   const data = await request.json();
-  const { privateKey, memo } = data;
-  console.log(data);
-  if (!privateKey || !memo) {
+  const { pKey, memo } = data;
+
+  if (!pKey || !memo) {
     throw new Error("Private key or memo is missing");
   }
-  console.log(request.body);
-  const tronWeb = new TronWeb(fullNode, solidityNode, eventServer, privateKey);
+
+  const tronWeb = new TronWeb(fullNode, solidityNode, eventServer, pKey);
   const blackHole = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb"; // Black hole address
 
   try {
