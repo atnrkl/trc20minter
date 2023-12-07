@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { DataTable } from "./dataTable";
 import { columns } from "./columns";
+import crypto from "crypto";
 
 // Define the Payment type
 export type Payment = {
@@ -18,6 +19,19 @@ const Home = () => {
   const [memo, setMemo] = useState("");
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const [data, setData] = useState<Payment[]>([]);
+  const secretKey = process.env.SK;
+
+  function encrypt(text: string, secretKey: string) {
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv(
+      "aes-256-cbc",
+      Buffer.from(secretKey),
+      iv
+    );
+    let encrypted = cipher.update(text);
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+    return iv.toString("hex") + ":" + encrypted.toString("hex");
+  }
 
   const fetchData = async () => {
     try {
@@ -27,7 +41,7 @@ const Home = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          pKey: PK.trim(),
+          pKey: encrypt(PK.trim(), secretKey!),
           memo: memo.trim(),
         }),
       });
@@ -79,14 +93,13 @@ const Home = () => {
       <div>
         <p>Your P.K</p>
         <Input
-          placeholder=""
           onChange={(e) => setPK(e.target.value)}
           className="w-96 rounded-md text-gray-900"
         />
       </div>
+      <p>Data</p>
       <div>
         <Input
-          placeholder="Data"
           onChange={(e) => setMemo(e.target.value)}
           className="w-96 rounded-md text-gray-900"
         />

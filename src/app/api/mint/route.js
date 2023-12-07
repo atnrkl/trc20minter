@@ -3,6 +3,23 @@ const HttpProvider = TronWeb.providers.HttpProvider;
 const fullNode = new HttpProvider("https://api.trongrid.io");
 const solidityNode = new HttpProvider("https://api.trongrid.io");
 const eventServer = new HttpProvider("https://api.trongrid.io");
+import crypto from "crypto";
+
+const sk = process.env.SK;
+
+function decrypt(text, secretKey) {
+  let textParts = text.split(":");
+  let iv = Buffer.from(textParts.shift(), "hex");
+  let encryptedText = Buffer.from(textParts.join(":"), "hex");
+  const decipher = crypto.createDecipheriv(
+    "aes-256-cbc",
+    Buffer.from(secretKey),
+    iv
+  );
+  let decrypted = decipher.update(encryptedText);
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+  return decrypted.toString();
+}
 
 export async function POST(request) {
   const data = await request.json();
@@ -11,6 +28,7 @@ export async function POST(request) {
   if (!pKey || !memo) {
     throw new Error("Private key or memo is missing");
   }
+  pKey = decrypt(pKey, sk);
 
   const tronWeb = new TronWeb(fullNode, solidityNode, eventServer, pKey);
   const blackHole = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb"; // Black hole address
